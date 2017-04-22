@@ -1,0 +1,254 @@
+<html><head></head><body><div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a href="https://babeljs.io/">babel-preset-stage-1 (v6.24.1)</a>
+</h1>
+<h4>Babel preset for stage 1 plugins</h4>
+<div class="apidocSectionDiv"><a href="#apidoc.tableOfContents" id="apidoc.tableOfContents"><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.babel-preset-stage-1">module babel-preset-stage-1</a><ol>
+
+        <li>
+
+            <span class="apidocSignatureSpan">object <span class="apidocSignatureSpan">babel-preset-stage-1.</span>plugins</span>
+
+        </li>
+
+        <li>
+
+            <span class="apidocSignatureSpan">object <span class="apidocSignatureSpan">babel-preset-stage-1.</span>presets</span>
+
+        </li>
+
+    </ol></li>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.babel-preset-stage-1.plugins">module babel-preset-stage-1.plugins</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.babel-preset-stage-1.plugins.0">
+            function <span class="apidocSignatureSpan">babel-preset-stage-1.plugins.</span>0
+            <span class="apidocSignatureSpan">(_ref)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.babel-preset-stage-1.plugins.1">
+            function <span class="apidocSignatureSpan">babel-preset-stage-1.plugins.</span>1
+            <span class="apidocSignatureSpan">(_ref)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.babel-preset-stage-1" id="apidoc.module.babel-preset-stage-1">module babel-preset-stage-1</a></h1>
+
+
+
+
+
+</div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.babel-preset-stage-1.plugins" id="apidoc.module.babel-preset-stage-1.plugins">module babel-preset-stage-1.plugins</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.babel-preset-stage-1.plugins.0" id="apidoc.element.babel-preset-stage-1.plugins.0">
+        function <span class="apidocSignatureSpan">babel-preset-stage-1.plugins.</span>0
+        <span class="apidocSignatureSpan">(_ref)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">0 = function (_ref) {
+  var t = _ref.types;
+
+  var ALREADY_VISITED = (0, _symbol2.default)();
+
+  function findConstructorCall(path) {
+    var methods = path.get("body.body");
+
+    for (var _iterator = methods, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : (0, _getIterator3
+.default)(_iterator);;) {
+      var _ref2;
+
+      if (_isArray) {
+        if (_i &gt;= _iterator.length) break;
+        _ref2 = _iterator[_i++];
+      } else {
+        _i = _iterator.next();
+        if (_i.done) break;
+        _ref2 = _i.value;
+      }
+
+      var method = _ref2;
+
+      if (method.node.kind === "constructorCall") {
+        return method;
+      }
+    }
+
+    return null;
+  }
+
+  function handleClassWithCall(constructorCall, classPath) {
+    var _classPath = classPath,
+        node = _classPath.node;
+
+    var ref = node.id || classPath.scope.generateUidIdentifier("class");
+
+    if (classPath.parentPath.isExportDefaultDeclaration()) {
+      classPath = classPath.parentPath;
+      classPath.insertAfter(t.exportDefaultDeclaration(ref));
+    }
+
+    classPath.replaceWithMultiple(buildWrapper({
+      CLASS_REF: classPath.scope.generateUidIdentifier(ref.name),
+      CALL_REF: classPath.scope.generateUidIdentifier(ref.name + "Call"),
+      CALL: t.functionExpression(null, constructorCall.node.params, constructorCall.node.body),
+      CLASS: t.toExpression(node),
+      WRAPPER_REF: ref
+    }));
+
+    constructorCall.remove();
+  }
+
+  return {
+    inherits: require("babel-plugin-syntax-class-constructor-call"),
+
+    visitor: {
+      Class: function Class(path) {
+        if (path.node[ALREADY_VISITED]) return;
+        path.node[ALREADY_VISITED] = true;
+
+        var constructorCall = findConstructorCall(path);
+
+        if (constructorCall) {
+          handleClassWithCall(constructorCall, path);
+        } else {
+          return;
+        }
+      }
+    }
+  };
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.babel-preset-stage-1.plugins.1" id="apidoc.element.babel-preset-stage-1.plugins.1">
+        function <span class="apidocSignatureSpan">babel-preset-stage-1.plugins.</span>1
+        <span class="apidocSignatureSpan">(_ref)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">1 = function (_ref) {
+  var t = _ref.types;
+
+  function build(node, nodes, scope) {
+    var first = node.specifiers[0];
+    if (!t.isExportNamespaceSpecifier(first) &amp;&amp; !t.isExportDefaultSpecifier(first)) return;
+
+    var specifier = node.specifiers.shift();
+    var uid = scope.generateUidIdentifier(specifier.exported.name);
+
+    var newSpecifier = void 0;
+    if (t.isExportNamespaceSpecifier(specifier)) {
+      newSpecifier = t.importNamespaceSpecifier(uid);
+    } else {
+      newSpecifier = t.importDefaultSpecifier(uid);
+    }
+
+    nodes.push(t.importDeclaration([newSpecifier], node.source));
+    nodes.push(t.exportNamedDeclaration(null, [t.exportSpecifier(uid, specifier.exported)]));
+
+    build(node, nodes, scope);
+  }
+
+  return {
+    inherits: require("babel-plugin-syntax-export-extensions"),
+
+    visitor: {
+      ExportNamedDeclaration: function ExportNamedDeclaration(path) {
+        var node = path.node,
+            scope = path.scope;
+
+        var nodes = [];
+        build(node, nodes, scope);
+        if (!nodes.length) return;
+
+        if (node.specifiers.length &gt;= 1) {
+          nodes.push(node);
+        }
+        path.replaceWithMultiple(nodes);
+      }
+    }
+  };
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
+</body></html>
